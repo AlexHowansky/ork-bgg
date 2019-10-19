@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Shall we play a game?</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossorigin="anonymous">
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css"
+            integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p"
+            crossorigin="anonymous">
+        <style>
+            table tbody tr td {
+                cursor: pointer;
+            }
+            table tbody tr td img {
+                width: 96px;
+            }
+            #container {
+                margin-top: 64px;
+            }
+            body {
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar fixed-top bg-light pl-2">
+            <form class="form-inline" method="post" id="form">
+                <button type="button" class="btn btn-lg btn-primary">Clear</button>
+
+                <select name="username" class="custom-select custom-select-lg ml-2">
+                    <option value="">Any user</option>
+{% for user in users %}
+                    <option value="{{ user }}"{{ post.username == user ? ' selected' }}>{{ user }}</option>
+{% endfor %}
+                </select>
+
+                <select name="numPlayersType" class="custom-select custom-select-lg ml-2">
+                    <option value="atLeast"{{ post.numPlayersType == 'atLeast' ? ' selected' : '' }}>At least</option>
+                    <option value="suggested"{{ post.numPlayersType == 'suggested' ? ' selected' : '' }}>Suggested</option>
+                </select>
+
+                <select name="numPlayers" class="custom-select custom-select-lg ml-2">
+                    <option value="">Any players</option>
+{% for players in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] %}
+                    <option value="{{ players }}"{{ post.numPlayers == players ? ' selected' }}>
+                        {{ players }} player{{ players > 1 ? 's' }}
+                    </option>
+{% endfor %}
+                </select>
+
+                <select name="maxPlayTime" class="custom-select custom-select-lg ml-2">
+                    <option value="">Any play time</option>
+{% for playtime, label in {15: '15m', 30: '30m', 45: '45m', 60: '60m', 90: '1h 30m', 120: '2h', 180: '3h'} %}
+                    <option value="{{ playtime }}"{{ post.maxPlayTime == playtime ? ' selected' }}>max {{ label }}</option>
+{% endfor %}
+                </select>
+
+                <select name="maxWeight" class="custom-select custom-select-lg ml-2">
+                    <option value="">Any weight</option>
+{% for weight in [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5] %}
+                    <option value="{{ weight }}"{{ post.maxWeight == weight ? 'selected' }}>max {{ weight|number_format(1) }}</option>
+{% endfor %}
+                </select>
+
+                <select name="expansions" class="custom-select custom-select-lg ml-2">
+                    <option value="0"{{ post.expansions ? '' : ' selected' }}>Excluding expansions</option>
+                    <option value="1"{{ post.expansions ? ' selected' : '' }}>Including expansions</option>
+                </select>
+
+                <input name="search" class="form-control form-control-lg ml-2" type="text" placeholder="Search" autocomplete="off" value="{{ post.search }}">
+
+            </form>
+        </nav>
+
+        <div id="container">
+            <table id="table" class="table table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Game</th>
+                        <th class="text-center d-none d-md-table-cell">Rank</th>
+                        <th class="text-center">Rating</th>
+                        <th class="text-center">Players</th>
+                        <th class="text-center">Play Time</th>
+                        <th class="text-center">Weight</th>
+                        <th class="text-center">Year</th>
+                    </tr>
+                </thead>
+                <tbody>
+{% if games is empty %}
+                    <tr>
+                        <td colspan="7">No matches.</td>
+                    </tr>
+{% else %}
+{% for game in games %}
+                    <tr data-game-id="{{ game.id }}">
+                        <td>
+                            <img class="d-none d-lg-inline" src="{{ game.thumbnail }}">
+                            {{ game.name }}
+                        </td>
+                        <td class="d-none d-md-table-cell text-center align-middle">
+                            {{ game.rank ?: 'N/A' }}
+                        </td>
+                        <td class="text-center align-middle">
+                            {{ game.geekRating|number_format(2) }}
+                        </td>
+                        <td class="text-center align-middle">
+                            {{ game.minPlayers }}{{ game.maxPlayers > game.minPlayers ? ' - ' ~ game.maxPlayers }}
+                            ({{ game.recommendedPlayers }})
+                        </td>
+                        <td class="text-center align-middle">
+                            {{ game.minPlayTime }}{{ game.maxPlayTime > game.minPlayTime ? ' - ' ~ game.maxPlayTime }}
+                        </td>
+                        <td class="text-center align-middle">
+                            {{ game.weight|number_format(2) }}
+                        </td>
+                        <td class="text-center align-middle">
+                            {{ game.yearPublished }}
+                        </td>
+                    </tr>
+{% endfor %}
+{% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+            integrity="sha384-vk5WoKIaW/vJyUAd9n/wmopsmNhiy+L2Z+SBxGYnUkunIxVxAv/UtMOhba/xskxh"
+            crossorigin="anonymous">
+        </script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+            integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o"
+            crossorigin="anonymous">
+        </script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.min.js"
+            integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp"
+            crossorigin="anonymous">
+        </script>
+        <script>
+            $(function() {
+                $('input').focus();
+                $('select').change(function() {
+                    $('#form').submit();
+                });
+                $('button').click(function() {
+                    $('select').val('');
+                    $('input').val('');
+                    $('#form').submit();
+                });
+                $('#table').DataTable({
+                    order: [[2, 'desc']],
+                    paging: false,
+                    searching: false,
+                });
+                $('table tbody tr').click(function() {
+                    window.open('http://boardgamegeek.com/boardgame/' + $(this).data('game-id'));
+                });
+            });
+        </script>
+    </body>
+</html>
