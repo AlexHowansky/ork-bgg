@@ -1,5 +1,17 @@
 {
     "name": "ork/bgg",
+    "type": "project",
+    "description": "A simple web app to catalog, browse, and search your board game collection.",
+    "keywords": ["ork", "boardgame"],
+    "homepage": "http://github.com/AlexHowansky/ork-bgg",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Howansky",
+            "email": "alex.howansky@gmail.com",
+            "homepage": "https://github.com/AlexHowansky"
+        }
+    ],
     "require": {
         "php": "^7.3",
         "ext-pdo_sqlite": "*",
