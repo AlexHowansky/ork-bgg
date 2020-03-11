@@ -13,20 +13,7 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/jquery.dataTables.min.css"
             integrity="sha384-1UXhfqyOyO+W+XsGhiIFwwD3hsaHRz2XDGMle3b8bXPH5+cMsXVShDoHA3AH/y/p"
             crossorigin="anonymous">
-        <style>
-            table tbody tr td {
-                cursor: pointer;
-            }
-            table tbody tr td img {
-                width: 96px;
-            }
-            #container {
-                margin-top: 64px;
-            }
-            body {
-                font-weight: bold;
-            }
-        </style>
+        <link rel="stylesheet" href="/bgg.css">
     </head>
     <body>
         <nav class="navbar fixed-top bg-light pl-2">
@@ -144,26 +131,6 @@
             integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp"
             crossorigin="anonymous">
         </script>
-        <script>
-            $(function() {
-                $('input').focus();
-                $('select').change(function() {
-                    $('#form').submit();
-                });
-                $('button').click(function() {
-                    $('select').val('');
-                    $('input').val('');
-                    $('#form').submit();
-                });
-                $('#table').DataTable({
-                    order: [[2, 'desc']],
-                    paging: false,
-                    searching: false,
-                });
-                $('table tbody tr').click(function() {
-                    window.open('http://boardgamegeek.com/boardgame/' + $(this).data('game-id'));
-                });
-            });
-        </script>
+        <script src="/bgg.js"></script>
     </body>
 </html>

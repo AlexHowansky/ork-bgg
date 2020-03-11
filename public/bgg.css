@@ -1,0 +1,15 @@
+table tbody tr td {
+    cursor: pointer;
+}
+
+table tbody tr td img {
+    width: 96px;
+}
+
+#container {
+    margin-top: 64px;
+}
+
+body {
+    font-weight: bold;
+}
