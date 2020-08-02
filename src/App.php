@@ -11,8 +11,8 @@
 
 namespace Ork\Bgg;
 
-use Interop\Container\ContainerInterface;
 use Ork\Bgg\Route\Index;
+use Psr\Container\ContainerInterface;
 use Slim\Http\Environment;
 use Slim\Http\Uri;
 use Slim\Views\Twig;
