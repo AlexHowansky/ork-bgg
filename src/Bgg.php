@@ -152,6 +152,7 @@ class Bgg
                 'description' => (string) $thing->description,
             ];
         }
+        return [];
     }
 
 }

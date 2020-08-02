@@ -1,0 +1,13 @@
+<?php
+
+namespace Slim;
+
+class App
+{
+
+    /**
+     * @return \Slim\Container
+     */
+    public function getContainer();
+
+}

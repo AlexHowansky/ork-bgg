@@ -21,7 +21,7 @@
     },
     "require-dev": {
         "ork/phpcs": "^2.0.12",
-        "phpstan/phpstan": "^0.11"
+        "phpstan/phpstan": ">=0.12.0 <1.0.0"
     },
     "autoload": {
         "psr-4": {

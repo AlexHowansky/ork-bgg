@@ -1,5 +1,9 @@
 parameters:
+    checkMissingIterableValueType: false
     level: max
     paths:
         - bin
         - src
+    stubFiles:
+        - stubs/Slim/App.stub
+        - stubs/Slim/Container.stub
