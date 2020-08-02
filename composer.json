@@ -15,7 +15,7 @@
     "require": {
         "php": "^7.3",
         "ext-pdo_sqlite": "*",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^7",
         "slim/slim": "^3.12",
         "slim/twig-view": "^2.5"
     },
