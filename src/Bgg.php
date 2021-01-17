@@ -45,10 +45,15 @@ class Bgg
             try {
                 $xml = simplexml_load_string(
                     (new Client(['base_uri' => self::BASE_URI]))
-                        ->get($url, ['query' => $args])->getBody()->getContents()
+                        ->get($url, ['query' => $args])
+                        ->getBody()
+                        ->getContents()
                 );
             } catch (ClientException $e) {
-                if ($e->getResponse() instanceof ResponseInterface && $e->getResponse()->getStatusCode() === 429) {
+                if (
+                    $e->getResponse() instanceof ResponseInterface &&
+                    $e->getResponse()->getStatusCode() === 429
+                ) {
                     sleep(self::RATE_LIMIT_SLEEP);
                     continue;
                 } else {
@@ -75,6 +80,8 @@ class Bgg
      * @param string $username The user to get the collection for.
      *
      * @return \Generator An iterator over the user's collected items.
+     *
+     * @throws \RuntimeException If the user owns no games.
      */
     public function getCollectionForUser(string $username): \Generator
     {
