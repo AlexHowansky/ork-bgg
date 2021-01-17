@@ -24,7 +24,7 @@ CREATE INDEX game_name ON game (name);
 CREATE UNIQUE INDEX game_hash ON game (hash);
 
 CREATE TABLE own (
-    username TEXT NOT NULL REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE,
+    username TEXT NOT NULL,
     gameId INT NOT NULL REFERENCES game(id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (username, gameId)
 );
