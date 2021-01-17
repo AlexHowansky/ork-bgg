@@ -23,10 +23,10 @@ class Bgg
 {
 
     // The BGG API base URI.
-    const BASE_URI = 'https://www.boardgamegeek.com/xmlapi2/';
+    protected const BASE_URI = 'https://www.boardgamegeek.com/xmlapi2/';
 
     // If we get rejected due to a rate limit restriction, sleep this long and then try again.
-    const RATE_LIMIT_SLEEP = 30;
+    protected const RATE_LIMIT_SLEEP = 30;
 
     /**
      * Make an API request.
@@ -60,8 +60,11 @@ class Bgg
         if ($xml === false) {
             throw new \RuntimeException('BGG API response was not valid XML.');
         }
-        if (isset($xml->error) === true) {
-            throw new \RuntimeException('BGG API returned error: ' . $xml->error->message);
+        if ($xml->getName() === 'errors') {
+            throw new \RuntimeException('BGG API returned error: ' . $xml->error->message ?? 'unknown');
+        }
+        if ($xml->getName() === 'message') {
+            throw new \RuntimeException('BGG API returned message: ' . trim((string) $xml));
         }
         return $xml;
     }
@@ -84,6 +87,9 @@ class Bgg
                 'own' => 1,
             ]
         );
+        if (count($collection) === 0) {
+            throw new \RuntimeException('User owns no games.');
+        }
         foreach ($collection as $game) {
             if ((string) $game->attributes()['subtype'] !== 'boardgame') {
                 continue;

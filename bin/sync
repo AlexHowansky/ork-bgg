@@ -8,4 +8,8 @@ if ($argc !== 2) {
     exit;
 }
 
-(new \Ork\Bgg\Collection())->sync($argv[1]);
+try {
+    (new \Ork\Bgg\Collection())->sync($argv[1]);
+} catch (\Throwable $e) {
+    echo $e->getMessage() . "\n";
+}
