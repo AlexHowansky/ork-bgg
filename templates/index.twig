@@ -57,7 +57,7 @@
 
                 <select name="expansions" class="custom-select custom-select-lg ml-2">
                     <option value="0"{{ post.expansions ? '' : ' selected' }}>Excluding expansions</option>
-                    <option value="1"{{ post.expansions ? ' selected' : '' }}>Including expansions</option>
+                    <option value="1"{{ post.expansions is not defined or post.expansions ? ' selected' : '' }}>Including expansions</option>
                 </select>
 
                 <input name="search" class="form-control form-control-lg ml-2" type="text" placeholder="Search" autocomplete="off" value="{{ post.search }}">
