@@ -21,20 +21,21 @@ class Collection
      * Sync a user's BGG collection to the local database.
      *
      * @param string $username The user to sync.
+     * @param string $pattern  Optionally filter the set to games matching this pattern.
      *
      * @return void
      */
-    public function sync(string $username): void
+    public function sync(string $username, string $pattern = null): void
     {
         $db = new Db();
         $bgg = new Bgg();
         $ownedGameIds = [];
-        foreach ($bgg->getCollectionForUser($username) as $game) {
+        foreach ($bgg->getCollectionForUser($username, $pattern) as $game) {
             $ownedGameIds[] = $game['id'];
             $db->upsertGame($game);
             $db->upsertOwnage($username, $game['id']);
         }
-        if (empty($ownedGameIds) === false) {
+        if ($pattern === null && empty($ownedGameIds) === false) {
             $db->deleteNotOwned($username, $ownedGameIds);
         }
     }

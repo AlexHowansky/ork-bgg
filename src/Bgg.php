@@ -78,12 +78,13 @@ class Bgg
      * Get a user's owned collection.
      *
      * @param string $username The user to get the collection for.
+     * @param string $pattern  Optionally filter the set to games matching this pattern.
      *
      * @return \Generator An iterator over the user's collected items.
      *
      * @throws \RuntimeException If the user owns no games.
      */
-    public function getCollectionForUser(string $username): \Generator
+    public function getCollectionForUser(string $username, string $pattern = null): \Generator
     {
         $collection = $this->get(
             'collection',
@@ -100,6 +101,19 @@ class Bgg
         foreach ($collection as $game) {
             if ((string) $game->attributes()['subtype'] !== 'boardgame') {
                 continue;
+            }
+            if ($pattern !== null) {
+                if (strpos($pattern, '/') === 0) {
+                    // Treat $pattern as a regex if it starts with a slash.
+                    if (preg_match($pattern, (string) $game->name) !== 1) {
+                        continue;
+                    }
+                } else {
+                    // Otherwise, just look for a substring.
+                    if (stripos((string) $game->name, $pattern) === false) {
+                        continue;
+                    }
+                }
             }
             $row = [
                 'id' => (int) $game->attributes()['objectid'],

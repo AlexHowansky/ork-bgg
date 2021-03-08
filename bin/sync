@@ -3,13 +3,13 @@
 
 require_once realpath(__DIR__ . '/../vendor/autoload.php');
 
-if ($argc !== 2) {
-    printf("Usage: %s <username>\n", $argv[0]);
+if ($argc < 2) {
+    printf("Usage: %s <username> [<pattern>]\n", $argv[0]);
     exit;
 }
 
 try {
-    (new \Ork\Bgg\Collection())->sync($argv[1]);
+    (new \Ork\Bgg\Collection())->sync($argv[1], $argv[2] ?? null);
 } catch (\Throwable $e) {
     echo $e->getMessage() . "\n";
 }
