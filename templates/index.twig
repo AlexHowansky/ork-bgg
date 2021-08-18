@@ -1,8 +1,9 @@
 <!doctype html>
-<html>
+<html lang="en">
     <head>
         <title>Shall we play a game?</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Ork BGG -- The board game organizer.">
         <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"
@@ -87,7 +88,7 @@
 {% for game in games %}
                     <tr data-game-id="{{ game.id }}">
                         <td>
-                            <img class="d-none d-lg-inline" src="{{ game.thumbnail }}">
+                            <img class="d-none d-lg-inline" src="{{ game.thumbnail }}" alt="{{ game.name }}">
                             {{ game.name }}
                         </td>
                         <td class="d-none d-md-table-cell text-center align-middle">
