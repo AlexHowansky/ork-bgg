@@ -4,7 +4,7 @@
  * Ork BGG
  *
  * @package   Ork\BGG
- * @copyright 2019 Alex Howansky (https://github.com/AlexHowansky)
+ * @copyright 2019-2021 Alex Howansky (https://github.com/AlexHowansky)
  * @license   https://github.com/AlexHowansky/ork-bgg/blob/master/LICENSE MIT License
  * @link      https://github.com/AlexHowansky/ork-bgg
  */
@@ -260,7 +260,7 @@ class Db
     protected function updateGame(array $game): Db
     {
         $sth = $this->pdo->prepare(
-            'UPDATE game SET 
+            'UPDATE game SET
                  name = :name,
                  yearPublished = :yearPublished,
                  image = :image,

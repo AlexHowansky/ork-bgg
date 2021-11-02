@@ -4,7 +4,7 @@
  * Ork BGG
  *
  * @package   Ork\BGG
- * @copyright 2019 Alex Howansky (https://github.com/AlexHowansky)
+ * @copyright 2019-2021 Alex Howansky (https://github.com/AlexHowansky)
  * @license   https://github.com/AlexHowansky/ork-bgg/blob/master/LICENSE MIT License
  * @link      https://github.com/AlexHowansky/ork-bgg
  */
@@ -12,7 +12,6 @@
 namespace Ork\Bgg;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
 

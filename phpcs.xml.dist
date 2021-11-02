@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="Ork BGG">
-    <rule ref="vendor/ork/phpcs/Ork"/>
+    <rule ref="Ork"/>
     <file>bin</file>
     <file>src</file>
 </ruleset>
