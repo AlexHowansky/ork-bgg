@@ -65,7 +65,7 @@ class Bgg
             throw new \RuntimeException('BGG API response was not valid XML.');
         }
         if ($xml->getName() === 'errors') {
-            throw new \RuntimeException('BGG API returned error: ' . $xml->error->message ?? 'unknown');
+            throw new \RuntimeException('BGG API returned error: ' . $xml->error->message);
         }
         if ($xml->getName() === 'message') {
             throw new \RuntimeException('BGG API returned message: ' . trim((string) $xml));
@@ -98,7 +98,7 @@ class Bgg
             throw new \RuntimeException('User owns no games.');
         }
         foreach ($collection as $game) {
-            if ((string) $game->attributes()['subtype'] !== 'boardgame') {
+            if ((string) ($game->attributes()['subtype'] ?? '') !== 'boardgame') {
                 continue;
             }
             if ($pattern !== null) {
@@ -115,23 +115,23 @@ class Bgg
                 }
             }
             $row = [
-                'id' => (int) $game->attributes()['objectid'],
+                'id' => (int) ($game->attributes()['objectid'] ?? 0),
                 'name' => preg_replace('/\s+/', ' ', (string) $game->name),
-                'yearPublished' => (int) $game->yearpublished,
+                'yearPublished' => (int) ($game->yearpublished ?? 0),
                 'image' => (string) $game->image,
                 'thumbnail' => (string) $game->thumbnail,
-                'minPlayers' => (int) $game->stats->attributes()['minplayers'],
-                'maxPlayers' => (int) $game->stats->attributes()['maxplayers'],
-                'minPlayTime' => (int) $game->stats->attributes()['minplaytime'],
-                'maxPlayTime' => (int) $game->stats->attributes()['maxplaytime'],
-                'playTime' => (int) $game->stats->attributes()['playingtime'],
-                'geekRating' => (float) $game->stats->rating->bayesaverage->attributes()['value'],
-                'averageRating' => (float) $game->stats->rating->average->attributes()['value'],
-                'numVoters' => (int) $game->stats->rating->usersrated->attributes()['value'],
+                'minPlayers' => (int) ($game->stats->attributes()['minplayers'] ?? 0),
+                'maxPlayers' => (int) ($game->stats->attributes()['maxplayers'] ?? 0),
+                'minPlayTime' => (int) ($game->stats->attributes()['minplaytime'] ?? 0),
+                'maxPlayTime' => (int) ($game->stats->attributes()['maxplaytime'] ?? 0),
+                'playTime' => (int) ($game->stats->attributes()['playingtime'] ?? 0),
+                'geekRating' => (float) ($game->stats->rating->bayesaverage->attributes()['value'] ?? 0),
+                'averageRating' => (float) ($game->stats->rating->average->attributes()['value'] ?? 0),
+                'numVoters' => (int) ($game->stats->rating->usersrated->attributes()['value'] ?? 0),
             ];
             foreach ($game->stats->rating->ranks->rank as $rank) {
-                if ((string) $rank->attributes()['name'] === 'boardgame') {
-                    $row['rank'] = (int) $rank->attributes()['value'];
+                if ((string) ($rank->attributes()['name'] ?? '') === 'boardgame') {
+                    $row['rank'] = (int) ($rank->attributes()['value'] ?? 0);
                     break;
                 }
             }
@@ -164,9 +164,9 @@ class Bgg
             $recommended = [];
             foreach ($thing->xpath('//poll[@name="suggested_numplayers"]/results') as $results) {
                 foreach ($results as $result) {
-                    if ((string) $result->attributes()['value'] === 'Best') {
-                        $recommended[(string) $results->attributes()['numplayers']] =
-                            (int) $result->attributes()['numvotes'];
+                    if ((string) ($result->attributes()['value'] ?? '') === 'Best') {
+                        $recommended[(int) ($results->attributes()['numplayers'] ?? 0)] =
+                            (int) ($result->attributes()['numvotes'] ?? 0);
                         break;
                     }
                 }
@@ -174,7 +174,7 @@ class Bgg
             arsort($recommended);
             return [
                 'recommendedPlayers' => key($recommended),
-                'weight' => (float) $thing->statistics->ratings->averageweight->attributes()['value'],
+                'weight' => (float) ($thing->statistics->ratings->averageweight->attributes()['value'] ?? 0),
                 'description' => (string) $thing->description,
             ];
         }

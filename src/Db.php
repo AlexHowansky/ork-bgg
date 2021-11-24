@@ -107,7 +107,7 @@ class Db
     {
         $sth = $this->pdo->prepare('SELECT * FROM game WHERE id = :id');
         $sth->execute(['id' => $id]);
-        return $sth->fetch(\PDO::FETCH_ASSOC) ?: [];
+        return (array) ($sth->fetch(\PDO::FETCH_ASSOC) ?: []);
     }
 
     /**

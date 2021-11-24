@@ -21,8 +21,8 @@
     },
     "require-dev": {
         "matthiasmullie/minify": "^1.3",
-        "ork/phpcs": "^2.6",
-        "phpstan/phpstan": ">=0.12.99 <1.0.0"
+        "ork/phpcs": "^2.7",
+        "phpstan/phpstan": "^1.2"
     },
     "autoload": {
         "psr-4": {
@@ -36,6 +36,6 @@
             "minifycss css/bgg.css > public/bgg.min.css"
         ],
         "phpcs": "phpcs",
-        "phpstan": "phpstan analyze"
+        "phpstan": "phpstan"
     }
 }
