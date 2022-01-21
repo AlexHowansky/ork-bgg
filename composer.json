@@ -22,7 +22,8 @@
     "require-dev": {
         "matthiasmullie/minify": "^1.3",
         "ork/phpcs": "^2.7",
-        "phpstan/phpstan": "^1.2"
+        "phpstan/phpstan": "^1.4",
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {
@@ -37,5 +38,10 @@
         ],
         "phpcs": "phpcs",
         "phpstan": "phpstan"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
