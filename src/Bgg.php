@@ -79,7 +79,7 @@ class Bgg
      * @param string $username The user to get the collection for.
      * @param string $pattern  Optionally filter the set to games matching this pattern.
      *
-     * @return \Generator An iterator over the user's collected items.
+     * @return \Generator<array> An iterator over the user's collected items.
      *
      * @throws \RuntimeException If the user owns no games.
      */

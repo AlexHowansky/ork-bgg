@@ -205,7 +205,7 @@ class Db
             throw new \RuntimeException('getUsers() query failed.');
         }
         $result = $sth->fetchAll(\PDO::FETCH_COLUMN);
-        if ($result === false) {
+        if (empty($result) === true) {
             throw new \RuntimeException('getUsers() fetch failed.');
         }
         return $result;
