@@ -2,12 +2,13 @@
 <html lang="en">
     <head>
         <title>Shall we play a game?</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Ork BGG -- The board game organizer.">
         <link
             rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/css/bootstrap.min.css"
-            integrity="sha512-T584yQ/tdRR5QwOpfvDfVQUidzfgc2339Lc8uBDtcp/wYu80d7jwBgAxbyMh0a9YM9F8N3tdErpFI8iaGx6x5g=="
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css"
+            integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q=="
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
         />
@@ -21,63 +22,56 @@
         <link rel="stylesheet" href="/bgg.min.css">
     </head>
     <body>
-        <nav class="navbar fixed-top bg-light pl-2">
-            <form class="form-inline" method="post" id="form">
-                <button type="button" class="btn btn-lg btn-primary">Clear</button>
-
-                <select name="username" class="custom-select custom-select-lg ml-2">
-                    <option value="">Any user</option>
+        <nav class="navbar fixed-top navbar-expand-md navbar-light bg-light">
+            <div class="container-fluid">
+                <form class="d-flex" method="post" id="form">
+                    <button type="button" class="btn btn-lg btn-primary">Clear</button>
+                    <select class="form-select form-select-lg ms-2">
+                        <option value="">Any user</option>
 {% for user in users %}
-                    <option value="{{ user }}"{{ post.username == user ? ' selected' }}>{{ user }}</option>
+                        <option value="{{ user }}"{{ post.username == user ? ' selected' }}>{{ user }}</option>
 {% endfor %}
-                </select>
-
-                <select name="numPlayersType" class="custom-select custom-select-lg ml-2">
-                    <option value="atLeast"{{ post.numPlayersType == 'atLeast' ? ' selected' : '' }}>At least</option>
-                    <option value="suggested"{{ post.numPlayersType == 'suggested' ? ' selected' : '' }}>Suggested</option>
-                </select>
-
-                <select name="numPlayers" class="custom-select custom-select-lg ml-2">
-                    <option value="">Any players</option>
-{% for players in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] %}
-                    <option value="{{ players }}"{{ post.numPlayers == players ? ' selected' }}>
-                        {{ players }} player{{ players > 1 ? 's' }}
-                    </option>
+                    </select>
+                    <select name="numPlayersType" class="form-select form-select-lg ms-2">
+                        <option value="atLeast"{{ post.numPlayersType == 'atLeast' ? ' selected' : '' }}>At least</option>
+                        <option value="suggested"{{ post.numPlayersType == 'suggested' ? ' selected' : '' }}>Suggested</option>
+                    </select>
+                    <select name="numPlayers" class="form-select form-select-lg ms-2">
+                        <option value="">Any players</option>
+{% for players in range(1, 10) %}
+                        <option value="{{ players }}"{{ post.numPlayers == players ? ' selected' }}>
+                            {{ players }} player{{ players > 1 ? 's' }}
+                        </option>
 {% endfor %}
-                </select>
-
-                <select name="maxPlayTime" class="custom-select custom-select-lg ml-2">
-                    <option value="">Any play time</option>
+                    </select>
+                    <select name="maxPlayTime" class="form-select form-select-lg ms-2">
+                        <option value="">Any play time</option>
 {% for playtime, label in {15: '15m', 30: '30m', 45: '45m', 60: '60m', 90: '1h 30m', 120: '2h', 180: '3h'} %}
-                    <option value="{{ playtime }}"{{ post.maxPlayTime == playtime ? ' selected' }}>max {{ label }}</option>
+                        <option value="{{ playtime }}"{{ post.maxPlayTime == playtime ? ' selected' }}>max {{ label }}</option>
 {% endfor %}
-                </select>
-
-                <select name="maxWeight" class="custom-select custom-select-lg ml-2">
-                    <option value="">Any weight</option>
+                    </select>
+                    <select name="maxWeight" class="form-select form-select-lg ms-2">
+                        <option value="">Any weight</option>
 {% for weight in [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5] %}
-                    <option value="{{ weight }}"{{ post.maxWeight == weight ? 'selected' }}>max {{ weight|number_format(1) }}</option>
+                        <option value="{{ weight }}"{{ post.maxWeight == weight ? 'selected' }}>max {{ weight|number_format(1) }}</option>
 {% endfor %}
-                </select>
-
-                <select name="cooperative" class="custom-select custom-select-lg ml-2">
-                    <option value="">Any type</option>
-                    <option value="0"{{ post.cooperative is defined and post.cooperative == 0 ? ' selected' : '' }}>competitive</option>
-                    <option value="1"{{ post.cooperative is defined and post.cooperative == 1 ? ' selected' : '' }}>cooperative</option>
-                </select>
-
-                <select name="expansions" class="custom-select custom-select-lg ml-2">
-                    <option value="0"{{ post.expansions ? '' : ' selected' }}>Excluding expansions</option>
-                    <option value="1"{{ post.expansions is not defined or post.expansions ? ' selected' : '' }}>Including expansions</option>
-                </select>
-
-                <input name="search" class="form-control form-control-lg ml-2" type="text" placeholder="Search" autocomplete="off" value="{{ post.search }}">
-
-            </form>
+                    </select>
+                    <select name="cooperative" class="form-select form-select-lg ms-2">
+                        <option value="">Any type</option>
+                        <option value="0"{{ post.cooperative is defined and post.cooperative == 0 ? ' selected' : '' }}>competitive</option>
+                        <option value="1"{{ post.cooperative is defined and post.cooperative == 1 ? ' selected' : '' }}>cooperative</option>
+                    </select>
+                    <select name="expansions" class="form-select form-select-lg ms-2">
+                        <option value="0"{{ post.expansions ? '' : ' selected' }}>Excluding expansions</option>
+                        <option value="1"{{ post.expansions is not defined or post.expansions ? ' selected' : '' }}>Including expansions</option>
+                    </select>
+                    <input name="search" class="form-control form-control-lg ms-2" type="text" placeholder="Search" autocomplete="off" value="{{ post.search }}">
+                </form>
+            </div>
         </nav>
         <div id="container">
             <table id="table" class="table table-hover">
-                <thead class="thead-dark">
+                <thead class="table-dark">
                     <tr>
                         <th>Game</th>
                         <th class="text-center d-none d-md-table-cell">Rank</th>
@@ -85,7 +79,7 @@
                         <th class="text-center">Players</th>
                         <th class="text-center">Play Time</th>
                         <th class="text-center">Weight</th>
-                        <th class="text-center">Year</th>
+                        <th class="text-center d-none d-lg-table-cell">Year</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,28 +89,28 @@
                     </tr>
 {% else %}
 {% for game in games %}
-                    <tr data-game-id="{{ game.id }}">
-                        <td>
+                    <tr class="text-center align-middle" data-game-id="{{ game.id }}">
+                        <td class="text-start">
                             <img class="d-none d-lg-inline" src="{{ game.thumbnail }}" alt="{{ game.name }}">
                             {{ game.name }}
                         </td>
-                        <td class="d-none d-md-table-cell text-center align-middle">
+                        <td class="d-none d-md-table-cell">
                             {{ game.rank ?: 'N/A' }}
                         </td>
-                        <td class="text-center align-middle">
+                        <td>
                             {{ game.geekRating|number_format(2) }}
                         </td>
-                        <td class="text-center align-middle">
+                        <td>
                             {{ game.minPlayers }}{{ game.maxPlayers > game.minPlayers ? ' - ' ~ game.maxPlayers }}
                             ({{ game.recommendedPlayers }})
                         </td>
-                        <td class="text-center align-middle">
+                        <td>
                             {{ game.minPlayTime }}{{ game.maxPlayTime > game.minPlayTime ? ' - ' ~ game.maxPlayTime }}
                         </td>
-                        <td class="text-center align-middle">
+                        <td>
                             {{ game.weight|number_format(2) }}
                         </td>
-                        <td class="text-center align-middle">
+                        <td class="d-none d-lg-table-cell">
                             {{ game.yearPublished }}
                         </td>
                     </tr>
@@ -126,14 +120,14 @@
             </table>
         </div>
         <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-            integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+            integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
             crossorigin="anonymous"
             referrerpolicy="no-referrer">
         </script>
         <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.1/js/bootstrap.bundle.min.js"
-            integrity="sha512-mULnawDVcCnsk9a4aG1QLZZ6rcce/jSzEGqUkeOLy0b6q0+T6syHrxlsAGH7ZVoqC93Pd0lBqd6WguPWih7VHA=="
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/js/bootstrap.min.js"
+            integrity="sha512-8Y8eGK92dzouwpROIppwr+0kPauu0qqtnzZZNEF8Pat5tuRNJxJXCkbQfJ0HlUG3y1HB3z18CSKmUo7i2zcPpg=="
             crossorigin="anonymous"
             referrerpolicy="no-referrer">
         </script>
