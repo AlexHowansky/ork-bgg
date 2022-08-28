@@ -143,6 +143,10 @@ class Db
             $where[] = 'weight <= :maxWeight';
             $bind['maxWeight'] = $params['maxWeight'];
         }
+        if (($params['cooperative'] ?? '') !== '') {
+            $where[] = 'cooperative = :cooperative';
+            $bind['cooperative'] = (bool) $params['cooperative'];
+        }
         if (empty($params['expansions'] ?? null) === true) {
             $where[] = 'rank > 0';
         }
@@ -239,11 +243,11 @@ class Db
             'INSERT INTO game (
                  id, name, yearPublished, image, thumbnail, minPlayers, maxPlayers, recommendedPlayers,
                  minPlayTime, maxPlayTime, playTime, geekRating, averageRating, numVoters, rank, weight,
-                 description, hash
+                 cooperative, description, hash
              ) VALUES (
                  :id, :name, :yearPublished, :image, :thumbnail, :minPlayers, :maxPlayers, :recommendedPlayers,
                  :minPlayTime, :maxPlayTime, :playTime, :geekRating, :averageRating, :numVoters, :rank, :weight,
-                 :description, :hash
+                 :cooperative, :description, :hash
              )'
         );
         $sth->execute($game);
@@ -276,6 +280,7 @@ class Db
                  numVoters = :numVoters,
                  rank = :rank,
                  weight = :weight,
+                 cooperative = :cooperative,
                  description = :description,
                  hash = :hash
              WHERE id = :id'

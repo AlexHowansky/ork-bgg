@@ -15,6 +15,7 @@ CREATE TABLE game (
     numVoters INT,
     rank INT,
     weight FLOAT,
+    cooperative BOOLEAN NOT NULL DEFAULT FALSE,
     description TEXT,
     hash TEXT NOT NULL,
     PRIMARY KEY (id)

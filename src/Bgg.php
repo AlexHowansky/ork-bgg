@@ -173,9 +173,10 @@ class Bgg
             }
             arsort($recommended);
             return [
+                'cooperative' => !empty($thing->xpath('//link[@type="boardgamemechanic"][@value="Cooperative Game"]')),
+                'description' => (string) $thing->description,
                 'recommendedPlayers' => key($recommended),
                 'weight' => (float) ($thing->statistics->ratings->averageweight->attributes()['value'] ?? 0),
-                'description' => (string) $thing->description,
             ];
         }
         return [];

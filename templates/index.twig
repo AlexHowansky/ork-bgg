@@ -60,6 +60,12 @@
 {% endfor %}
                 </select>
 
+                <select name="cooperative" class="custom-select custom-select-lg ml-2">
+                    <option value="">Any type</option>
+                    <option value="0"{{ post.cooperative is defined and post.cooperative == 0 ? ' selected' : '' }}>competitive</option>
+                    <option value="1"{{ post.cooperative is defined and post.cooperative == 1 ? ' selected' : '' }}>cooperative</option>
+                </select>
+
                 <select name="expansions" class="custom-select custom-select-lg ml-2">
                     <option value="0"{{ post.expansions ? '' : ' selected' }}>Excluding expansions</option>
                     <option value="1"{{ post.expansions is not defined or post.expansions ? ' selected' : '' }}>Including expansions</option>
