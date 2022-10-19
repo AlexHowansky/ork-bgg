@@ -23,17 +23,15 @@ class Index extends AbstractRoute
     /**
      * The methods to allow for this route.
      */
-    public const METHODS = ['GET', 'POST'];
+    final public const METHODS = ['GET', 'POST'];
 
     /**
      * The slug for this route.
      */
-    public const ROUTE = '/';
+    final public const ROUTE = '/';
 
     /**
      * Invocation implementation.
-     *
-     * @return Response
      */
     public function invoke(): Response
     {

@@ -224,7 +224,7 @@ class Db
     {
         try {
             $this->pdo->query('SELECT 1 FROM game LIMIT 1');
-        } catch (\PDOException $e) {
+        } catch (\PDOException) {
             $this->pdo->exec((string) file_get_contents($this->getSqlFile()));
         }
         return $this;

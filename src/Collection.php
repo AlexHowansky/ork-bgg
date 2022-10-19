@@ -22,8 +22,6 @@ class Collection
      *
      * @param string $username The user to sync.
      * @param string $pattern  Optionally filter the set to games matching this pattern.
-     *
-     * @return void
      */
     public function sync(string $username, string $pattern = null): void
     {

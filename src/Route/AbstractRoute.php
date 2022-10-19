@@ -29,13 +29,6 @@ abstract class AbstractRoute implements RouteInterface
     protected $args;
 
     /**
-     * Request container.
-     *
-     * @var Container
-     */
-    protected $container;
-
-    /**
      * Request.
      *
      * @var Request
@@ -54,9 +47,8 @@ abstract class AbstractRoute implements RouteInterface
      *
      * @param Container $container The request container.
      */
-    public function __construct(Container $container)
+    public function __construct(protected Container $container)
     {
-        $this->container = $container;
     }
 
     /**
@@ -78,8 +70,6 @@ abstract class AbstractRoute implements RouteInterface
 
     /**
      * Invocation implementation abstraction.
-     *
-     * @return Response
      */
     abstract public function invoke(): Response;
 
@@ -88,8 +78,6 @@ abstract class AbstractRoute implements RouteInterface
      *
      * @param string $template The template to render.
      * @param array  $args     The arguments to pass to the template.
-     *
-     * @return Response
      */
     public function render(string $template, array $args = []): Response
     {

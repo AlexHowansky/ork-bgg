@@ -102,7 +102,7 @@ class Bgg
                 continue;
             }
             if ($pattern !== null) {
-                if (strpos($pattern, '/') === 0) {
+                if (str_starts_with($pattern, '/') === true) {
                     // Treat $pattern as a regex if it starts with a slash.
                     if (preg_match($pattern, (string) $game->name) !== 1) {
                         continue;
@@ -137,7 +137,7 @@ class Bgg
             }
             $row += $this->getDetailsForThing($row['id']);
             ksort($row);
-            $row['hash'] = md5((string) json_encode($row));
+            $row['hash'] = md5((string) json_encode($row, JSON_THROW_ON_ERROR));
             yield $row;
         }
     }
