@@ -4,12 +4,16 @@
  * Ork BGG
  *
  * @package   Ork\BGG
- * @copyright 2019-2021 Alex Howansky (https://github.com/AlexHowansky)
+ * @copyright 2019-2022 Alex Howansky (https://github.com/AlexHowansky)
  * @license   https://github.com/AlexHowansky/ork-bgg/blob/master/LICENSE MIT License
  * @link      https://github.com/AlexHowansky/ork-bgg
  */
 
 namespace Ork\Bgg;
+
+use PDO;
+use PDOException;
+use RuntimeException;
 
 /**
  * Database abstraction.
@@ -17,20 +21,12 @@ namespace Ork\Bgg;
 class Db
 {
 
-    /**
-     * PDO object.
-     *
-     * @var \PDO
-     */
-    protected $pdo;
+    protected PDO $pdo;
 
-    /**
-     * Constructor.
-     */
     public function __construct()
     {
-        $this->pdo = new \PDO($this->getDsn());
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->pdo = new PDO($this->getDsn());
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->init();
     }
 
@@ -38,7 +34,7 @@ class Db
      * Indicate that a user owns a game.
      *
      * @param string $username The user who owns the game.
-     * @param int    $gameId   The game the user owns.
+     * @param int $gameId The game the user owns.
      *
      * @return Db Allow method chaining.
      */
@@ -55,8 +51,8 @@ class Db
     /**
      * Delete games that a user no longer owns.
      *
-     * @param string $username     The user who no longer owns the games.
-     * @param array  $ownedGameIds A list of games the user owns.
+     * @param string $username The user who no longer owns the games.
+     * @param array $ownedGameIds A list of games the user owns.
      *
      * @return Db Allow method chaining.
      */
@@ -75,13 +71,13 @@ class Db
      *
      * @return string The database directory.
      *
-     * @throws \RuntimeException On error.
+     * @throws RuntimeException On error.
      */
     protected function getDatabaseDir(): string
     {
         $dir = realpath(__DIR__ . '/../data/');
         if ($dir === false) {
-            throw new \RuntimeException('Unable to locate data directory.');
+            throw new RuntimeException('Unable to locate data directory.');
         }
         return $dir;
     }
@@ -127,40 +123,19 @@ class Db
             $where[] = 'own.username = :username';
             $bind['username'] = $params['username'];
         }
-        if (empty($params['numPlayers'] ?? null) === false) {
-            $bind['numPlayers'] = $params['numPlayers'];
-            if (($params['numPlayersType'] ?? null) === 'suggested') {
-                $where[] = 'recommendedPlayers = :numPlayers';
-            } else {
-                $where[] = 'minPlayers <= :numPlayers AND maxPlayers >= :numPlayers';
-            }
-        }
-        if (empty($params['maxPlayTime'] ?? null) === false) {
-            $where[] = 'maxPlayTime <= :maxPlayTime';
-            $bind['maxPlayTime'] = $params['maxPlayTime'];
-        }
-        if (empty($params['maxWeight'] ?? null) === false) {
-            $where[] = 'weight <= :maxWeight';
-            $bind['maxWeight'] = $params['maxWeight'];
-        }
-        if (($params['cooperative'] ?? '') !== '') {
-            $where[] = 'cooperative = :cooperative';
-            $bind['cooperative'] = (bool) $params['cooperative'];
-        }
-        if (empty($params['expansions'] ?? null) === true) {
-            $where[] = 'rank > 0';
-        }
-        if (empty($params['search'] ?? null) === false) {
-            $where[] = 'name LIKE :search';
-            $bind['search'] = '%' . $params['search'] . '%';
-        }
+        $this->whereCooperative($params, $where, $bind);
+        $this->whereExpansions($params, $where);
+        $this->whereMaxPlayTime($params, $where, $bind);
+        $this->whereMaxWeight($params, $where, $bind);
+        $this->whereNumPlayers($params, $where, $bind);
+        $this->whereSearch($params, $where, $bind);
         if (empty($where) === false) {
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }
         $sql .= ' ORDER BY geekRating DESC';
         $sth = $this->pdo->prepare($sql);
         $sth->execute($bind);
-        return $sth->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        return $sth->fetchAll(PDO::FETCH_ASSOC) ?: [];
     }
 
     /**
@@ -176,7 +151,7 @@ class Db
             'SELECT id FROM game JOIN own ON own.gameId = game.id WHERE own.username = :username'
         );
         $sth->execute(['username' => $username]);
-        return $sth->fetchAll(\PDO::FETCH_COLUMN) ?: [];
+        return $sth->fetchAll(PDO::FETCH_COLUMN) ?: [];
     }
 
     /**
@@ -184,13 +159,13 @@ class Db
      *
      * @return string The name of the SQL source file for database creation.
      *
-     * @throws \RuntimeException On error.
+     * @throws RuntimeException On error.
      */
     protected function getSqlFile(): string
     {
         $sqlFile = $this->getDatabaseDir() . '/bgg.sql';
         if (file_exists($sqlFile) === false) {
-            throw new \RuntimeException('Unable to locate SQL file.');
+            throw new RuntimeException('Unable to locate SQL file.');
         }
         return $sqlFile;
     }
@@ -200,17 +175,17 @@ class Db
      *
      * @return array The list of users.
      *
-     * @throws \RuntimeException On error.
+     * @throws RuntimeException On error.
      */
     public function getUsers(): array
     {
         $sth = $this->pdo->query('SELECT DISTINCT username FROM own ORDER BY username');
         if ($sth === false) {
-            throw new \RuntimeException('getUsers() query failed.');
+            throw new RuntimeException('getUsers() query failed.');
         }
         $result = $sth->fetchAll(\PDO::FETCH_COLUMN);
         if (empty($result) === true) {
-            throw new \RuntimeException('getUsers() fetch failed.');
+            throw new RuntimeException('getUsers() fetch failed.');
         }
         return $result;
     }
@@ -224,7 +199,7 @@ class Db
     {
         try {
             $this->pdo->query('SELECT 1 FROM game LIMIT 1');
-        } catch (\PDOException) {
+        } catch (PDOException) {
             $this->pdo->exec((string) file_get_contents($this->getSqlFile()));
         }
         return $this;
@@ -315,7 +290,7 @@ class Db
      * Update/insert game ownership.
      *
      * @param string $username The user who owns the game.
-     * @param int    $gameId   The game that the user owns.
+     * @param int $gameId The game that the user owns.
      *
      * @return Db Allow method chaining.
      */
@@ -334,7 +309,7 @@ class Db
      * Does a user own a game?
      *
      * @param string $username The username to check.
-     * @param int    $gameId   The game to check.
+     * @param int $gameId The game to check.
      *
      * @return bool True if the user owns the game.
      */
@@ -346,6 +321,98 @@ class Db
             'gameId' => $gameId,
         ]);
         return $sth->fetch() !== false;
+    }
+
+    /**
+     * Possibly add a WHERE clause for cooperative games.
+     *
+     * @param array $params The input parameters array.
+     * @param array $where The output WHERE clause array.
+     * @param array $bind The output bind values.
+     */
+    protected function whereCooperative(array $params, array &$where, array &$bind): void
+    {
+        if (($params['cooperative'] ?? '') !== '') {
+            $where[] = 'cooperative = :cooperative';
+            $bind['cooperative'] = (bool) $params['cooperative'];
+        }
+    }
+
+    /**
+     * Possibly add a WHERE clause for cooperative games.
+     *
+     * @param array $params The input parameters array.
+     * @param array $where The output WHERE clause array.
+     */
+    protected function whereExpansions(array $params, array &$where): void
+    {
+        if (empty($params['expansions'] ?? null) === true) {
+            $where[] = 'rank > 0';
+        }
+    }
+
+    /**
+     * Possibly add a WHERE clause for max play time.
+     *
+     * @param array $params The input parameters array.
+     * @param array $where The output WHERE clause array.
+     * @param array $bind The output bind values.
+     */
+    protected function whereMaxPlayTime(array $params, array &$where, array &$bind): void
+    {
+        if (empty($params['maxPlayTime'] ?? null) === false) {
+            $where[] = 'maxPlayTime <= :maxPlayTime';
+            $bind['maxPlayTime'] = $params['maxPlayTime'];
+        }
+    }
+
+    /**
+     * Possibly add a WHERE clause for max weight.
+     *
+     * @param array $params The input parameters array.
+     * @param array $where The output WHERE clause array.
+     * @param array $bind The output bind values.
+     */
+    protected function whereMaxWeight(array $params, array &$where, array &$bind): void
+    {
+        if (empty($params['maxWeight'] ?? null) === false) {
+            $where[] = 'weight <= :maxWeight';
+            $bind['maxWeight'] = $params['maxWeight'];
+        }
+    }
+
+    /**
+     * Possibly add a WHERE clause for number of players.
+     *
+     * @param array $params The input parameters array.
+     * @param array $where The output WHERE clause array.
+     * @param array $bind The output bind values.
+     */
+    protected function whereNumPlayers(array $params, array &$where, array &$bind): void
+    {
+        if (empty($params['numPlayers'] ?? null) === false) {
+            $bind['numPlayers'] = $params['numPlayers'];
+            if (($params['numPlayersType'] ?? null) === 'suggested') {
+                $where[] = 'recommendedPlayers = :numPlayers';
+            } else {
+                $where[] = 'minPlayers <= :numPlayers AND maxPlayers >= :numPlayers';
+            }
+        }
+    }
+
+    /**
+     * Possibly add a WHERE clause for keyword search.
+     *
+     * @param array $params The input parameters array.
+     * @param array $where The output WHERE clause array.
+     * @param array $bind The output bind values.
+     */
+    protected function whereSearch(array $params, array &$where, array &$bind): void
+    {
+        if (empty($params['search'] ?? null) === false) {
+            $where[] = 'name LIKE :search';
+            $bind['search'] = '%' . $params['search'] . '%';
+        }
     }
 
 }

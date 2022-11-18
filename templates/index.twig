@@ -7,8 +7,8 @@
         <meta name="description" content="Ork BGG -- The board game organizer.">
         <link
             rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css"
-            integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q=="
+            href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/css/bootstrap.min.css"
+            integrity="sha512-CpIKUSyh9QX2+zSdfGP+eWLx23C8Dj9/XmHjZY2uDtfkdLGo0uY12jgcnkX9vXOgYajEKb/jiw67EYm+kBf+6g=="
             crossorigin="anonymous"
             referrerpolicy="no-referrer"
         />
@@ -26,7 +26,7 @@
             <div class="container-fluid">
                 <form class="d-flex" method="post" id="form">
                     <button type="button" class="btn btn-lg btn-primary">Clear</button>
-                    <select class="form-select form-select-lg ms-2">
+                    <select name="username" class="form-select form-select-lg ms-2">
                         <option value="">Any user</option>
 {% for user in users %}
                         <option value="{{ user }}"{{ post.username == user ? ' selected' }}>{{ user }}</option>
@@ -126,8 +126,8 @@
             referrerpolicy="no-referrer">
         </script>
         <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/js/bootstrap.min.js"
-            integrity="sha512-8Y8eGK92dzouwpROIppwr+0kPauu0qqtnzZZNEF8Pat5tuRNJxJXCkbQfJ0HlUG3y1HB3z18CSKmUo7i2zcPpg=="
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/js/bootstrap.min.js"
+            integrity="sha512-5BqtYqlWfJemW5+v+TZUs22uigI8tXeVah5S/1Z6qBLVO7gakAOtkOzUtgq6dsIo5c0NJdmGPs0H9I+2OHUHVQ=="
             crossorigin="anonymous"
             referrerpolicy="no-referrer">
         </script>

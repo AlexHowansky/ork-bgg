@@ -6,8 +6,13 @@ caches it in a local SQLite database for quick searches.
 
 ## Installation
 
-Install like any other web app. See `composer.json` for requirements. Run
-`composer install` to install dependencies.
+```sh
+git clone https://github.com/AlexHowansky/ork-bgg.git
+composer install
+```
+
+Run a development server with `composer go` or point your webserver's document
+root to the `public` directory.
 
 ## Data
 

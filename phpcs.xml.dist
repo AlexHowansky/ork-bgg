@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <ruleset name="Ork BGG">
     <rule ref="Ork"/>
+    <rule ref="Generic.Metrics.CyclomaticComplexity">
+        <properties>
+            <property name="complexity" value="15"/>
+        </properties>
+    </rule>
     <file>bin</file>
     <file>src</file>
 </ruleset>

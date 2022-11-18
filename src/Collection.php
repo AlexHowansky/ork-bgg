@@ -4,7 +4,7 @@
  * Ork BGG
  *
  * @package   Ork\BGG
- * @copyright 2019-2021 Alex Howansky (https://github.com/AlexHowansky)
+ * @copyright 2019-2022 Alex Howansky (https://github.com/AlexHowansky)
  * @license   https://github.com/AlexHowansky/ork-bgg/blob/master/LICENSE MIT License
  * @link      https://github.com/AlexHowansky/ork-bgg
  */
@@ -21,7 +21,7 @@ class Collection
      * Sync a user's BGG collection to the local database.
      *
      * @param string $username The user to sync.
-     * @param string $pattern  Optionally filter the set to games matching this pattern.
+     * @param string $pattern Optionally filter the set to games matching this pattern.
      */
     public function sync(string $username, string $pattern = null): void
     {
