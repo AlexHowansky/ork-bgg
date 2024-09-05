@@ -23,16 +23,17 @@ class Index extends AbstractRoute
     /**
      * The methods to allow for this route.
      */
-    final public const METHODS = ['GET', 'POST'];
+    final public const array METHODS = ['GET', 'POST'];
 
     /**
      * The slug for this route.
      */
-    final public const ROUTE = '/';
+    final public const string ROUTE = '/';
 
     /**
      * Invocation implementation.
      */
+    #[\Override]
     public function invoke(): Response
     {
         $db = new Db();

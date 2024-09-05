@@ -60,6 +60,7 @@ abstract class AbstractRoute implements RouteInterface
      *
      * @return Response
      */
+    #[\Override]
     public function __invoke(Request $request, Response $response, array $args): Response
     {
         $this->request = $request;
