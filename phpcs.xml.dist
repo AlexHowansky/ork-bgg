@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <ruleset name="Ork BGG">
     <rule ref="Ork"/>
+    <rule ref="Squiz.Commenting.ClassComment.TagNotAllowed">
+        <exclude-pattern>src/Game.php</exclude-pattern>
+    </rule>
     <rule ref="Generic.Metrics.CyclomaticComplexity">
         <properties>
             <property name="complexity" value="15"/>

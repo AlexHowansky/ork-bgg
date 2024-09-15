@@ -98,17 +98,16 @@
                             {{ game.rank ?: 'N/A' }}
                         </td>
                         <td>
-                            {{ game.geekRating|number_format(2) }}
+                            {{ game.geekRating|number_format(1) }}
                         </td>
                         <td>
-                            {{ game.minPlayers }}{{ game.maxPlayers > game.minPlayers ? ' - ' ~ game.maxPlayers }}
-                            ({{ game.recommendedPlayers }})
+                            {{ game.players }}
                         </td>
                         <td>
-                            {{ game.minPlayTime }}{{ game.maxPlayTime > game.minPlayTime ? ' - ' ~ game.maxPlayTime }}
+                            {{ game.playTime }}
                         </td>
                         <td>
-                            {{ game.weight|number_format(2) }}
+                            {{ game.weight|number_format(1) }}
                         </td>
                         <td class="d-none d-lg-table-cell">
                             {{ game.yearPublished }}

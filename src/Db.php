@@ -135,7 +135,7 @@ class Db
         $sql .= ' ORDER BY geekRating DESC';
         $sth = $this->pdo->prepare($sql);
         $sth->execute($bind);
-        return $sth->fetchAll(PDO::FETCH_ASSOC) ?: [];
+        return array_map(fn($game) => new Game($game), $sth->fetchAll(PDO::FETCH_ASSOC) ?: []);
     }
 
     /**
