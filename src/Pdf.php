@@ -45,9 +45,22 @@ class Pdf
 
     private const float PAGE_LABEL_WIDTH = 70.5;
 
+    private const float PAGE_POSITION_COOP = 26.0;
+
+    private const float PAGE_POSITION_RATING = 23.1;
+
     private const int QR_CODE_SIZE = 84;
 
     private const string QR_CODE_TYPE = 'gif';
+
+    // Fpdf::Write() is great for mixing font/style/weight, but it doesn't have
+    // a right-justify option, so we'll tweak the starting X position based on
+    // the characters that are different widths. These values are only good for
+    // this one particular font.
+    private const array RIGHT_JUSTIFY_TWEAK = [
+        '1' => 0.6,
+        '4' => -0.3,
+    ];
 
     private const array TEXT_COLOR = [0, 0, 0];
 
@@ -131,11 +144,12 @@ class Pdf
         $this->pdf->SetTextColor(...self::TEXT_COLOR);
 
         // Rating field.
-        $this->pdf->SetX($x + 23);
+        $rating = sprintf('%0.1f', $game->geekRating);
+        $this->pdf->SetX($x + self::PAGE_POSITION_RATING + $this->rightJustifyTweak($rating));
         $this->pdf->SetFont('Barlow', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, ' Rating: ');
         $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_DETAIL);
-        $this->pdf->Write(self::LINE_HEIGHT, sprintf('%0.1f', $game->geekRating));
+        $this->pdf->Write(self::LINE_HEIGHT, $rating);
         $this->pdf->Write(self::LINE_HEIGHT, "\n");
 
         // Time field.
@@ -146,7 +160,7 @@ class Pdf
         $this->pdf->Write(self::LINE_HEIGHT, $game->playTime);
 
         // Co-Op field.
-        $this->pdf->SetX($x + 26);
+        $this->pdf->SetX($x + self::PAGE_POSITION_COOP);
         $this->pdf->SetFont('Barlow', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, ' Co-Op: ');
         $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_DETAIL);
@@ -184,6 +198,15 @@ class Pdf
         );
         (new Writer($renderer))->writeFile($game->url, $this->qrCodeFile);
         return $this->qrCodeFile;
+    }
+
+    protected function rightJustifyTweak(string $string): float
+    {
+        $tweak = 0;
+        foreach (self::RIGHT_JUSTIFY_TWEAK as $digit => $value) {
+            $tweak += substr_count($string, $digit) * $value;
+        }
+        return $tweak;
     }
 
     public function skip(int $count): self
