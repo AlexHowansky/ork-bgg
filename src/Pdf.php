@@ -35,9 +35,9 @@ class Pdf
 
     private const float LABEL_POSITION_TEXT = 1.0;
 
-    private const float LABEL_POSITION_COOP = 26.0;
+    private const float LABEL_POSITION_COOP = 27.0;
 
-    private const float LABEL_POSITION_RATING = 23.1;
+    private const float LABEL_POSITION_RATING = 24.1;
 
     private const float LINE_HEIGHT = 5.0;
 
@@ -45,13 +45,13 @@ class Pdf
 
     private const int PAGE_ROWS = 10;
 
-    private const float PAGE_LABEL_HEIGHT = 25.3;
+    private const float PAGE_LABEL_HEIGHT = 25.25;
 
-    private const float PAGE_LABEL_LEFT_MARGIN = 5.0;
+    private const float PAGE_LABEL_LEFT_MARGIN = 4.5;
 
     private const float PAGE_LABEL_TOP_MARGIN = 14.5;
 
-    private const float PAGE_LABEL_WIDTH = 70.5;
+    private const float PAGE_LABEL_WIDTH = 70.25;
 
     private const float QR_CODE_SIZE = 22.0;
 
