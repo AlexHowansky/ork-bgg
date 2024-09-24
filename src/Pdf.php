@@ -37,15 +37,15 @@ class Pdf
 
     private const int PAGE_ROWS = 10;
 
-    private const float PAGE_LABEL_HEIGHT = 25.4;
+    private const float PAGE_LABEL_HEIGHT = 25.3;
 
     private const float PAGE_LABEL_LEFT_MARGIN = 5.0;
 
-    private const float PAGE_LABEL_TOP_MARGIN = 15.0;
+    private const float PAGE_LABEL_TOP_MARGIN = 14.5;
 
     private const float PAGE_LABEL_WIDTH = 70.5;
 
-    private const int QR_CODE_SIZE = 80;
+    private const int QR_CODE_SIZE = 84;
 
     private const string QR_CODE_TYPE = 'gif';
 
@@ -131,7 +131,7 @@ class Pdf
         $this->pdf->SetTextColor(...self::TEXT_COLOR);
 
         // Rating field.
-        $this->pdf->SetX($x + 25);
+        $this->pdf->SetX($x + 23);
         $this->pdf->SetFont('Barlow', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, ' Rating: ');
         $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_DETAIL);
@@ -146,7 +146,7 @@ class Pdf
         $this->pdf->Write(self::LINE_HEIGHT, $game->playTime);
 
         // Co-Op field.
-        $this->pdf->SetX($x + 28);
+        $this->pdf->SetX($x + 26);
         $this->pdf->SetFont('Barlow', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, ' Co-Op: ');
         $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_DETAIL);
