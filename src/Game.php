@@ -19,7 +19,7 @@ use RuntimeException;
  * @property-read float $averageRating
  * @property-read bool $cooperative
  * @property-read string $description
- * @property-read float $geekRatibng
+ * @property-read float $geekRating
  * @property-read string $hash
  * @property-read int $id
  * @property-read string $image
@@ -33,6 +33,7 @@ use RuntimeException;
  * @property-read int $rank
  * @property-read int $recommendedPlayers
  * @property-read string $thumbnail
+ * @property-read string $url
  * @property-read float $weight
  * @property-read int $yearPublished
  */
