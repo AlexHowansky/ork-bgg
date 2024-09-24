@@ -82,8 +82,8 @@ class Pdf
     public function __construct()
     {
         $this->pdf = new Fpdf();
-        $this->pdf->AddFont('Barlow', '', 'BarlowCondensed-Regular.php', $this->fontDir());
-        $this->pdf->AddFont('Barlow', 'B', 'BarlowCondensed-Bold.php', $this->fontDir());
+        $this->pdf->AddFont('default', '', 'BarlowCondensed-Regular.php', $this->fontDir());
+        $this->pdf->AddFont('default', 'B', 'BarlowCondensed-Bold.php', $this->fontDir());
         $this->pdf->SetDisplayMode('real', 'single');
         $this->pdf->SetAutoPageBreak(false);
         $this->pdf->SetMargins(0, 0, 0);
@@ -122,23 +122,23 @@ class Pdf
 
         // Name field.
         $this->pdf->SetXY($x, $y);
-        $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_NAME);
+        $this->pdf->SetFont('default', 'B', self::FONT_SIZE_NAME);
         $this->pdf->Write(self::LINE_HEIGHT, $game->name);
         $this->pdf->Write(self::LINE_HEIGHT, "\n");
 
         // Numer of players field.
         $this->pdf->SetX($x);
-        $this->pdf->SetFont('Barlow', '', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, 'Players: ');
-        $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', 'B', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, $game->players(true));
         $this->pdf->Write(self::LINE_HEIGHT, "\n");
 
         // Weight field.
         $this->pdf->SetX($x);
-        $this->pdf->SetFont('Barlow', '', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, 'Weight: ');
-        $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', 'B', self::FONT_SIZE_DETAIL);
         $this->pdf->SetTextColor(...self::WEIGHT_COLORS[intval($game->weight)]);
         $this->pdf->Write(self::LINE_HEIGHT, sprintf('%0.1f', $game->weight));
         $this->pdf->SetTextColor(...self::TEXT_COLOR);
@@ -146,24 +146,24 @@ class Pdf
         // Rating field.
         $rating = sprintf('%0.1f', $game->geekRating);
         $this->pdf->SetX($x + self::PAGE_POSITION_RATING + $this->rightJustifyTweak($rating));
-        $this->pdf->SetFont('Barlow', '', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, ' Rating: ');
-        $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', 'B', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, $rating);
         $this->pdf->Write(self::LINE_HEIGHT, "\n");
 
         // Time field.
         $this->pdf->SetX($x);
-        $this->pdf->SetFont('Barlow', '', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, 'Time: ');
-        $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', 'B', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, $game->playTime);
 
         // Co-Op field.
         $this->pdf->SetX($x + self::PAGE_POSITION_COOP);
-        $this->pdf->SetFont('Barlow', '', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, ' Co-Op: ');
-        $this->pdf->SetFont('Barlow', 'B', self::FONT_SIZE_DETAIL);
+        $this->pdf->SetFont('default', 'B', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, $game->cooperative === true ? 'Y' : 'N');
 
         ++$this->added;
