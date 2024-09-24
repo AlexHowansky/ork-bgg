@@ -16,6 +16,7 @@ use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Fpdf\Fpdf;
+use org\bovigo\vfs\vfsStream;
 use RuntimeException;
 
 /**
@@ -74,18 +75,14 @@ class Pdf
         $this->pdf->SetAutoPageBreak(false);
         $this->pdf->SetMargins(0, 0, 0);
         $this->pdf->AddPage('P', 'Letter');
-        $this->qrCodeFile = tempnam(sys_get_temp_dir(), 'ork-bgg.qr.');
+        $this->qrCodeFile = vfsStream::setup()->url() . '/qr';
     }
 
     public function __destruct()
     {
-        if (file_exists($this->qrCodeFile) === true) {
-            unlink($this->qrCodeFile);
+        if ($this->added > 0) {
+            $this->pdf->Output('F', self::FILE_NAME);
         }
-        if ($this->added === 0) {
-            throw new RuntimeException('Pattern matched no titles, nothing generated.');
-        }
-        $this->pdf->Output('F', self::FILE_NAME);
     }
 
     public function add(Game $game): self
@@ -168,7 +165,11 @@ class Pdf
 
     public function generate(array $params = []): self
     {
-        foreach ((new Db())->getGames($params) as $count => $game) {
+        $games = (new Db())->getGames($params);
+        if (empty($games) === true) {
+            throw new RuntimeException('Pattern matched no titles, nothing generated.');
+        }
+        foreach ($games as $count => $game) {
             $this->add($game);
             printf("%3d %s\n", $count + 1, $game->name);
         }
