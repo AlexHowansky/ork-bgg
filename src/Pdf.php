@@ -13,10 +13,12 @@ namespace Ork\Bgg;
 
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\Module\DotsModule;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Fpdf\Fpdf;
 use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamDirectory;
 use RuntimeException;
 
 /**
@@ -30,6 +32,12 @@ class Pdf
     private const float FONT_SIZE_DETAIL = 13.0;
 
     private const float FONT_SIZE_NAME = 10.0;
+
+    private const float LABEL_POSITION_TEXT = 1.0;
+
+    private const float LABEL_POSITION_COOP = 26.0;
+
+    private const float LABEL_POSITION_RATING = 23.1;
 
     private const float LINE_HEIGHT = 5.0;
 
@@ -45,11 +53,7 @@ class Pdf
 
     private const float PAGE_LABEL_WIDTH = 70.5;
 
-    private const float PAGE_POSITION_COOP = 26.0;
-
-    private const float PAGE_POSITION_RATING = 23.1;
-
-    private const int QR_CODE_SIZE = 84;
+    private const float QR_CODE_SIZE = 22.0;
 
     private const string QR_CODE_TYPE = 'gif';
 
@@ -77,7 +81,7 @@ class Pdf
 
     private int $position = 0;
 
-    private readonly string $qrCodeFile;
+    private readonly vfsStreamDirectory $vfs;
 
     public function __construct()
     {
@@ -88,7 +92,7 @@ class Pdf
         $this->pdf->SetAutoPageBreak(false);
         $this->pdf->SetMargins(0, 0, 0);
         $this->pdf->AddPage('P', 'Letter');
-        $this->qrCodeFile = vfsStream::setup()->url() . '/qr';
+        $this->vfs = vfsStream::setup();
     }
 
     public function __destruct()
@@ -112,13 +116,14 @@ class Pdf
 
         // QR code.
         $this->pdf->SetXY($x, $y);
-        $this->pdf->Image(file: $this->qr($game), type: self::QR_CODE_TYPE);
+        $this->pdf->Image($this->qr($game), null, null, self::QR_CODE_SIZE, self::QR_CODE_SIZE, self::QR_CODE_TYPE);
 
-        // For the rest of this block's output, shift X right by the width of the QR code.
-        $x += self::QR_CODE_SIZE / 4 + 1;
+        // Adjust the X position so that the text is right of the QR code.
+        $x += self::QR_CODE_SIZE;
 
-        // And shift Y by a small margin.
-        ++$y;
+        // Adjust the Y position so that the center of the text block is
+        // vertically aligned with the center of the QR code.
+        $y += self::LABEL_POSITION_TEXT;
 
         // Name field.
         $this->pdf->SetXY($x, $y);
@@ -145,7 +150,7 @@ class Pdf
 
         // Rating field.
         $rating = sprintf('%0.1f', $game->geekRating);
-        $this->pdf->SetX($x + self::PAGE_POSITION_RATING + $this->rightJustifyTweak($rating));
+        $this->pdf->SetX($x + self::LABEL_POSITION_RATING + $this->rightJustifyTweak($rating));
         $this->pdf->SetFont('default', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, ' Rating: ');
         $this->pdf->SetFont('default', 'B', self::FONT_SIZE_DETAIL);
@@ -160,7 +165,7 @@ class Pdf
         $this->pdf->Write(self::LINE_HEIGHT, $game->playTime);
 
         // Co-Op field.
-        $this->pdf->SetX($x + self::PAGE_POSITION_COOP);
+        $this->pdf->SetX($x + self::LABEL_POSITION_COOP);
         $this->pdf->SetFont('default', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, ' Co-Op: ');
         $this->pdf->SetFont('default', 'B', self::FONT_SIZE_DETAIL);
@@ -192,12 +197,14 @@ class Pdf
 
     protected function qr(Game $game): string
     {
+        $size = self::QR_CODE_SIZE * 300 / 25.4;
+        $name = sprintf('%s/%d.%s', $this->vfs->url(), $game->id, self::QR_CODE_TYPE);
         $renderer = new ImageRenderer(
-            new RendererStyle(self::QR_CODE_SIZE, 0),
+            new RendererStyle($size, 0, new DotsModule(0.95)),
             new ImagickImageBackEnd(self::QR_CODE_TYPE)
         );
-        (new Writer($renderer))->writeFile($game->url, $this->qrCodeFile);
-        return $this->qrCodeFile;
+        (new Writer($renderer))->writeFile($game->url, $name);
+        return $name;
     }
 
     protected function rightJustifyTweak(string $string): float
