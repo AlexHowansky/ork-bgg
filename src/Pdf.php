@@ -169,7 +169,7 @@ class Pdf
         $this->pdf->SetFont('default', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, ' Co-Op: ');
         $this->pdf->SetFont('default', 'B', self::FONT_SIZE_DETAIL);
-        $this->pdf->Write(self::LINE_HEIGHT, $game->cooperative === true ? 'Y' : 'N');
+        $this->pdf->Write(self::LINE_HEIGHT, (bool) $game->cooperative === true ? 'Y' : 'N');
 
         ++$this->added;
         ++$this->position;
