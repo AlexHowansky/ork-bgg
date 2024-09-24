@@ -204,7 +204,7 @@ class Pdf
     {
         $tweak = 0;
         foreach (self::RIGHT_JUSTIFY_TWEAK as $digit => $value) {
-            $tweak += substr_count($string, $digit) * $value;
+            $tweak += substr_count($string, (string) $digit) * $value;
         }
         return $tweak;
     }
