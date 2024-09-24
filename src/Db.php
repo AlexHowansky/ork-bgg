@@ -133,6 +133,10 @@ class Db
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }
         $sql .= ' ORDER BY geekRating DESC';
+        if ($params['limit'] > 0) {
+            $sql .= ' LIMIT :limit';
+            $bind['limit'] = $params['limit'];
+        }
         $sth = $this->pdo->prepare($sql);
         $sth->execute($bind);
         return array_map(fn($game) => new Game($game), $sth->fetchAll(PDO::FETCH_ASSOC) ?: []);
