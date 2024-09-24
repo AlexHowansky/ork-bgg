@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")/../fonts")
+
+cd "${DIR}"
+
+for FACE in BarlowCondensed-Bold BarlowCondensed-Regular
+do
+    if [ ! -f "${DIR}/${FACE}.ttf" ]
+    then
+        echo "Downloaded ${DIR}/${FACE}.ttf"
+        wget -q "https://github.com/jpt/barlow/raw/refs/heads/main/fonts/ttf/${FACE}.ttf"
+    fi
+    if [ ! -f "${DIR}/${FACE}.php" ]
+    then
+        php ../vendor/fpdf/fpdf/src/Fpdf/makefont/makefont.php "${DIR}/${FACE}.ttf"
+    fi
+done
+

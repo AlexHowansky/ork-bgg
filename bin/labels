@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+require_once realpath(__DIR__ . '/../vendor/autoload.php');
+
+use Ork\Bgg\Pdf;
+
+if ($argc < 2) {
+    printf("Usage: %s <username> [<pattern>] [<limit>] [<skip>]\n", $argv[0]);
+    exit;
+}
+
+try {
+    (new Pdf())
+        ->skip($argv[4] ?? 0)
+        ->generate([
+            'username' => $argv[1],
+            'search' => $argv[2] ?? null,
+            'limit' => $argv[3] ?? 0
+        ]);
+} catch (Throwable $e) {
+    echo $e->getMessage() . "\n";
+}
