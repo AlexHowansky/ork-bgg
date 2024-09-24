@@ -197,7 +197,7 @@ class Pdf
 
     protected function qr(Game $game): string
     {
-        $size = self::QR_CODE_SIZE * 300 / 25.4;
+        $size = intval(self::QR_CODE_SIZE * 300 / 25.4);
         $name = sprintf('%s/%d.%s', $this->vfs->url(), $game->id, self::QR_CODE_TYPE);
         $renderer = new ImageRenderer(
             new RendererStyle($size, 0, new DotsModule(0.95)),
