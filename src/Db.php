@@ -20,6 +20,23 @@ use RuntimeException;
  */
 class Db
 {
+    protected const array ORDERABLE_FIELDS = [
+        'id',
+        'name',
+        'yearPublished',
+        'minPlayers',
+        'maxPlayers',
+        'recommendedPlayers',
+        'minPlayTime',
+        'maxPlayTime',
+        'playTime',
+        'geekRating',
+        'averageRating',
+        'numVoters',
+        'rank',
+        'weight',
+        'cooperative',
+    ];
 
     protected PDO $pdo;
 
@@ -133,7 +150,11 @@ class Db
         if (empty($where) === false) {
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }
-        $sql .= ' ORDER BY geekRating DESC';
+        $sql .= sprintf(
+            ' ORDER BY %s %s',
+            in_array($params['order'] ?? null, self::ORDERABLE_FIELDS) === true ? $params['order'] : 'geekRating',
+            in_array(strtoupper($params['direction'] ?? ''), ['ASC', 'DESC']) === true ? $params['direction'] : 'DESC'
+        );
         if ($params['limit'] > 0) {
             $sql .= ' LIMIT :limit';
             $bind['limit'] = $params['limit'];

@@ -16,7 +16,9 @@ try {
         ->generate([
             'username' => $argv[1],
             'search' => $argv[2] ?? null,
-            'limit' => $argv[3] ?? 0
+            'limit' => $argv[3] ?? 0,
+            'order' => 'name',
+            'direction' => 'ASC',
         ]);
 } catch (Throwable $e) {
     echo $e->getMessage() . "\n";
