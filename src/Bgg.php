@@ -43,11 +43,7 @@ class Bgg
     {
         $row = [
             'id' => (int) ($game->attributes()['objectid'] ?? 0),
-            'name' => preg_replace(
-                '/:? (the )?board ?game$/i',
-                '',
-                trim((string) preg_replace('/\s+/', ' ', (string) $game->name))
-            ),
+            'name' => $this->filterName((string) $game->name),
             'yearPublished' => (int) ($game->yearpublished ?? 0),
             'image' => (string) $game->image,
             'thumbnail' => (string) $game->thumbnail,
@@ -70,6 +66,23 @@ class Bgg
         ksort($row);
         $row['hash'] = md5((string) json_encode($row, JSON_THROW_ON_ERROR));
         return $row;
+    }
+
+    protected function filterName(string $name): string
+    {
+        // Replace all multiple-character whitespace blocks with a single space.
+        $name = preg_replace('/\s+/', ' ', $name);
+
+        // Trim spaces from both ends.
+        $name = trim($name);
+
+        // Strip ": The Board Game" from the end of names, we get it, it's a board game.
+        $name = preg_replace('/:? (the )?board ?game$/i', '', $name);
+
+        // Strip "The " from the start of names so labels are smaller and we sort correctly.
+        $name = preg_replace('/^the /i', '', $name);
+
+        return $name;
     }
 
     /**
