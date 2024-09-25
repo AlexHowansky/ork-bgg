@@ -436,7 +436,7 @@ class Db
     protected function whereSearch(array $params, array &$where, array &$bind): void
     {
         if (empty($params['search'] ?? null) === false) {
-            // @phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+            // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
             if (@preg_match($params['search'], '') === false) {
                 $where[] = 'name LIKE :like';
                 $bind['like'] = '%' . $params['search'] . '%';

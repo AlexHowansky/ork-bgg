@@ -43,7 +43,11 @@ class Bgg
     {
         $row = [
             'id' => (int) ($game->attributes()['objectid'] ?? 0),
-            'name' => preg_replace('/\s+/', ' ', (string) $game->name),
+            'name' => preg_replace(
+                '/:? (the )?board ?game$/i',
+                '',
+                trim((string) preg_replace('/\s+/', ' ', (string) $game->name))
+            ),
             'yearPublished' => (int) ($game->yearpublished ?? 0),
             'image' => (string) $game->image,
             'thumbnail' => (string) $game->thumbnail,
@@ -143,14 +147,13 @@ class Bgg
                 continue;
             }
             if ($pattern !== null) {
-                if (str_starts_with($pattern, '/') === true) {
-                    // Treat $pattern as a regex if it starts with a slash.
-                    if (preg_match($pattern, (string) $game->name) !== 1) {
+                // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+                if (@preg_match($pattern, '') === false) {
+                    if (stripos((string) $game->name, $pattern) === false) {
                         continue;
                     }
                 } else {
-                    // Otherwise, just look for a substring.
-                    if (stripos((string) $game->name, $pattern) === false) {
+                    if (preg_match($pattern, (string) $game->name) !== 1) {
                         continue;
                     }
                 }
