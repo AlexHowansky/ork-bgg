@@ -27,6 +27,7 @@ class Db
     {
         $this->pdo = new PDO($this->getDsn());
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->pdo->sqliteCreateFunction('regexp', fn (string $p, string $s): bool => preg_match($p, $s) === 1);
         $this->init();
     }
 
@@ -414,8 +415,14 @@ class Db
     protected function whereSearch(array $params, array &$where, array &$bind): void
     {
         if (empty($params['search'] ?? null) === false) {
-            $where[] = 'name LIKE :search';
-            $bind['search'] = '%' . $params['search'] . '%';
+            // @phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+            if (@preg_match($params['search'], '') === false) {
+                $where[] = 'name LIKE :like';
+                $bind['like'] = '%' . $params['search'] . '%';
+            } else {
+                $where[] = 'name REGEXP :regex';
+                $bind['regex'] = $params['search'];
+            }
         }
     }
 
