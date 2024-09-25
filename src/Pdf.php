@@ -45,11 +45,11 @@ class Pdf
 
     private const int PAGE_ROWS = 10;
 
-    private const float PAGE_LABEL_HEIGHT = 25.25;
+    private const float PAGE_LABEL_HEIGHT = 25.275;
 
     private const float PAGE_LABEL_LEFT_MARGIN = 4.5;
 
-    private const float PAGE_LABEL_TOP_MARGIN = 14.5;
+    private const float PAGE_LABEL_TOP_MARGIN = 15.5;
 
     private const float PAGE_LABEL_WIDTH = 70.25;
 
