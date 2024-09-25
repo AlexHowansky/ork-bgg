@@ -33,7 +33,7 @@ class Pdf
 
     private const float FONT_SIZE_NAME = 10.0;
 
-    private const float LABEL_POSITION_TEXT = 1.0;
+    private const float LABEL_POSITION_TEXT = 0.0;
 
     private const float LABEL_POSITION_COOP = 27.0;
 
@@ -53,7 +53,7 @@ class Pdf
 
     private const float PAGE_LABEL_WIDTH = 70.25;
 
-    private const float QR_CODE_SIZE = 22.0;
+    private const float QR_CODE_SIZE = 20.0;
 
     private const string QR_CODE_TYPE = 'gif';
 
