@@ -71,16 +71,16 @@ class Bgg
     protected function filterName(string $name): string
     {
         // Replace all multiple-character whitespace blocks with a single space.
-        $name = preg_replace('/\s+/', ' ', $name);
+        $name = (string) preg_replace('/\s+/', ' ', $name);
 
         // Trim spaces from both ends.
         $name = trim($name);
 
         // Strip ": The Board Game" from the end of names, we get it, it's a board game.
-        $name = preg_replace('/:? (the )?board ?game$/i', '', $name);
+        $name = (string) preg_replace('/:? (the )?board ?game$/i', '', $name);
 
         // Strip "The " from the start of names so labels are smaller and we sort correctly.
-        $name = preg_replace('/^the /i', '', $name);
+        $name = (string) preg_replace('/^the /i', '', $name);
 
         return $name;
     }
