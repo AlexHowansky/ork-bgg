@@ -19,6 +19,7 @@ try {
             'limit' => $argv[3] ?? 0,
             'order' => 'name',
             'direction' => 'ASC',
+            'expansions' => true,
         ]);
 } catch (Throwable $e) {
     echo $e->getMessage() . "\n";
