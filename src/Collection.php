@@ -41,7 +41,7 @@ class Collection
      * @param string $pattern Optionally filter the set to games matching this pattern.
      * @param bool $full If true, sync details for all games, else only new games.
      */
-    public function sync(string $username, string $pattern = null, bool $full = false): void
+    public function sync(string $username, ?string $pattern = null, bool $full = false): void
     {
         $db = new Db();
         $ownedGameIds = [];

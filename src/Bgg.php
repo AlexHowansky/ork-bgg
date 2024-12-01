@@ -138,7 +138,7 @@ class Bgg
      *
      * @throws RuntimeException If the user owns no games.
      */
-    public function getCollectionForUser(string $username, string $pattern = null): Generator
+    public function getCollectionForUser(string $username, ?string $pattern = null): Generator
     {
         $collection = $this->get(
             'collection',
