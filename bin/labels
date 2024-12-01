@@ -3,20 +3,24 @@
 
 require_once realpath(__DIR__ . '/../vendor/autoload.php');
 
+use Garden\Cli\Cli;
 use Ork\Bgg\Pdf;
 
-if ($argc < 2) {
-    printf("Usage: %s <username> [<pattern>] [<limit>] [<skip>]\n", $argv[0]);
-    exit;
-}
+$cli = (new Cli())
+    ->description('Generate game box labels.')
+    ->opt('pattern:p', 'Only print the titles that match this pattern. Can be a regex or a substring.')
+    ->opt('limit:l', 'Only print this many labels.')
+    ->opt('skip:s', 'Skip this many label positions.')
+    ->arg('user', 'The username to print labels for.', true)
+    ->parse();
 
 try {
     (new Pdf())
-        ->skip($argv[4] ?? 0)
+        ->skip($cli->getOpt('skip', 0))
         ->generate([
-            'username' => $argv[1],
-            'search' => $argv[2] ?? null,
-            'limit' => $argv[3] ?? 0,
+            'username' => $cli->getArg('user'),
+            'search' => $cli->getOpt('pattern', null),
+            'limit' => $cli->getOpt('limit', 0),
             'order' => 'name',
             'direction' => 'ASC',
             'expansions' => true,

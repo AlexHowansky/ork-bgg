@@ -29,6 +29,7 @@ use RuntimeException;
  * @property-read int $minPlayTime
  * @property-read string $name
  * @property-read int $numVoters
+ * @property-read string $players
  * @property-read int $playTime
  * @property-read int $rank
  * @property-read int $recommendedPlayers
@@ -37,19 +38,37 @@ use RuntimeException;
  * @property-read float $weight
  * @property-read int $yearPublished
  */
-readonly class Game
+class Game
 {
+
+    // These fields are not included in the `GET /collection` API response
+    // packet, and are lazy-loaded from the `GET /thing` API endpoint only
+    // when needed.
+    private const array LAZY_LOAD_FIELDS = [
+        'cooperative',
+        'description',
+        'hash',
+        'recommendedPlayers',
+        'weight',
+    ];
+
     private const string DETAIL_PAGE_URL = 'https://boardgamegeek.com/boardgame/';
 
     public function __construct(private array $data)
     {
+        ksort($this->data);
     }
 
     public function __get(string $name): mixed
     {
-        return method_exists($this, $name) === true
-            ? $this->$name()
-            : $this->data[$name] ?? throw new RuntimeException('No such attribute.');
+        $getter = 'get' . ucfirst($name);
+        if (method_exists($this, $getter) === true) {
+            return $this->$getter();
+        }
+        if (in_array($name, self::LAZY_LOAD_FIELDS) === true) {
+            $this->lazyLoad();
+        }
+        return $this->data[$name] ?? throw new RuntimeException('No such attribute: ' . $name);
     }
 
     public function __isset(string $name): bool
@@ -57,7 +76,7 @@ readonly class Game
         return array_key_exists($name, $this->data);
     }
 
-    public function players(bool $long = false): string
+    public function getPlayers(bool $long = false): string
     {
         return $this->minPlayers === $this->maxPlayers
             ? (string) $this->minPlayers
@@ -69,16 +88,32 @@ readonly class Game
             );
     }
 
-    public function playTime(): string
+    public function getPlayTime(): string
     {
         return $this->minPlayTime === $this->maxPlayTime
             ? (string) $this->minPlayTime
             : sprintf('%d - %d', $this->minPlayTime, $this->maxPlayTime);
     }
 
-    public function url(): string
+    public function getUrl(): string
     {
         return self::DETAIL_PAGE_URL . $this->id;
+    }
+
+    protected function lazyLoad(): void
+    {
+        if (array_key_exists('hash', $this->data) === false) {
+            $this->data += (new Bgg())->getDetailsForThing($this->id);
+            ksort($this->data);
+            $this->data['hash'] = md5((string) json_encode($this->data, JSON_THROW_ON_ERROR));
+            ksort($this->data);
+        }
+    }
+
+    public function toArray(): array
+    {
+        $this->lazyLoad();
+        return $this->data;
     }
 
 }

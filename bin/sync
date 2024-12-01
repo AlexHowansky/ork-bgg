@@ -3,15 +3,24 @@
 
 require_once realpath(__DIR__ . '/../vendor/autoload.php');
 
-use \Ork\Bgg\Collection;
+use Garden\Cli\Cli;
+use Ork\Bgg\Collection;
 
-if ($argc < 2) {
-    printf("Usage: %s <username> [<pattern>]\n", $argv[0]);
-    exit;
-}
+$cli = (new Cli())
+    ->description('Synchronize the local database with BGG for games owned by one user.')
+    ->opt('pattern:p', 'Only sync the titles that match this pattern. Can be a regex or a substring.')
+    ->opt(
+        'all:a',
+        'Update details for all games owned by this user. This requires a separate API hit for each game and may ' .
+        'take some time due to API throttling. By default, details are updated only for newly created game records.',
+        false,
+        'boolean'
+    )
+    ->arg('user', 'The username to sync.', true)
+    ->parse();
 
 try {
-    (new Collection())->sync($argv[1], $argv[2] ?? null);
+    (new Collection())->sync($cli->getArg('user'), $cli->getOpt('pattern'), $cli->getOpt('all', false));
 } catch (Throwable $e) {
     echo $e->getMessage() . "\n";
 }

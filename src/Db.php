@@ -20,6 +20,7 @@ use RuntimeException;
  */
 class Db
 {
+
     protected const array ORDERABLE_FIELDS = [
         'id',
         'name',
@@ -45,6 +46,7 @@ class Db
         $this->pdo = new PDO($this->getDsn());
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $this->pdo->sqliteCreateFunction('regexp', fn (string $p, string $s): bool => preg_match($p, $s) === 1);
+        $this->pdo->query('PRAGMA foreign_keys = ON');
         $this->init();
     }
 
@@ -58,12 +60,42 @@ class Db
      */
     public function addOwnage(string $username, int $gameId): Db
     {
-        $sth = $this->pdo->prepare('INSERT INTO own (username, gameId) VALUES (:username, :gameId)');
-        $sth->execute([
-            'username' => $username,
-            'gameId' => $gameId,
-        ]);
+        $this->pdo
+            ->prepare('INSERT INTO own (username, gameId) VALUES (:username, :gameId)')
+            ->execute([
+                'username' => $username,
+                'gameId' => $gameId,
+            ]);
         return $this;
+    }
+
+    /**
+     * Delete games that are not owned by any user.
+     *
+     * @return array The games that were deleted.
+     *
+     * @throws RuntimeException On error.
+     */
+    public function deleteOrphans(): array
+    {
+        $deleted = [];
+        $sth = $this->pdo->query(
+            'SELECT
+                game.id
+            FROM game
+                LEFT JOIN own ON own.gameId = game.id
+            WHERE
+                own.gameId IS NULL
+            ORDER BY
+                game.id'
+        ) ?: throw new RuntimeException('deleteOrphans() query failed');
+        foreach ($sth->fetchAll(PDO::FETCH_COLUMN) as $gameId) {
+            $deleted[] = $this->getGame($gameId);
+            $this->pdo
+                ->prepare('DELETE FROM game WHERE id = :id')
+                ->execute(['id' => $gameId]);
+        }
+        return $deleted;
     }
 
     /**
@@ -72,16 +104,17 @@ class Db
      * @param string $username The user who no longer owns the games.
      * @param array $ownedGameIds A list of games the user owns.
      *
-     * @return Db Allow method chaining.
+     * @return array The games that were deleted.
      */
-    public function deleteNotOwned(string $username, array $ownedGameIds): Db
+    public function deleteOwnage(string $username, array $ownedGameIds): array
     {
+        $deleted = [];
         $sth = $this->pdo->prepare('DELETE FROM own WHERE username = :username AND gameId = :gameId');
-        foreach (array_diff($this->getOwnedGameIds($username), $ownedGameIds) as $ownedGameId) {
-            printf("deleted   [%d]\n", $ownedGameId);
-            $sth->execute([$username, $ownedGameId]);
+        foreach (array_diff($this->getOwnedGameIds($username), $ownedGameIds) as $gameId) {
+            $deleted[] = $this->getGame($gameId);
+            $sth->execute(['username' => $username, 'gameId' => $gameId]);
         }
-        return $this;
+        return $deleted;
     }
 
     /**
@@ -115,13 +148,14 @@ class Db
      *
      * @param int $id The game to get.
      *
-     * @return array The game details.
+     * @return ?Game The game object.
      */
-    public function getGame(int $id): array
+    public function getGame(int $id): ?Game
     {
         $sth = $this->pdo->prepare('SELECT * FROM game WHERE id = :id');
         $sth->execute(['id' => $id]);
-        return (array) ($sth->fetch(\PDO::FETCH_ASSOC) ?: []);
+        $row = $sth->fetch(PDO::FETCH_ASSOC);
+        return is_array($row) === true ? new Game($row) : null;
     }
 
     /**
@@ -155,7 +189,7 @@ class Db
             in_array($params['order'] ?? null, self::ORDERABLE_FIELDS) === true ? $params['order'] : 'geekRating',
             in_array(strtoupper($params['direction'] ?? ''), ['ASC', 'DESC']) === true ? $params['direction'] : 'DESC'
         );
-        if ($params['limit'] > 0) {
+        if (empty($params['limit'] ?? null) === false) {
             $sql .= ' LIMIT :limit';
             $bind['limit'] = $params['limit'];
         }
@@ -205,15 +239,9 @@ class Db
      */
     public function getUsers(): array
     {
-        $sth = $this->pdo->query('SELECT DISTINCT username FROM own ORDER BY username');
-        if ($sth === false) {
+        $sth = $this->pdo->query('SELECT DISTINCT username FROM own ORDER BY username') ?:
             throw new RuntimeException('getUsers() query failed.');
-        }
-        $result = $sth->fetchAll(\PDO::FETCH_COLUMN);
-        if (empty($result) === true) {
-            throw new RuntimeException('getUsers() fetch failed.');
-        }
-        return $result;
+        return $sth->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**
@@ -234,11 +262,11 @@ class Db
     /**
      * Insert a new game record.
      *
-     * @param array $game The game details.
+     * @param Game $game The game object.
      *
      * @return Db Allow method chaining.
      */
-    protected function insertGame(array $game): Db
+    public function insertGame(Game $game): Db
     {
         $sth = $this->pdo->prepare(
             'INSERT INTO game (
@@ -251,18 +279,18 @@ class Db
                  :cooperative, :description, :hash
              )'
         );
-        $sth->execute($game);
+        $sth->execute($game->toArray());
         return $this;
     }
 
     /**
      * Update a game record.
      *
-     * @param array $game The game details.
+     * @param Game $game The game details.
      *
      * @return Db Allow method chaining.
      */
-    protected function updateGame(array $game): Db
+    public function updateGame(Game $game): Db
     {
         $sth = $this->pdo->prepare(
             'UPDATE game SET
@@ -286,48 +314,7 @@ class Db
                  hash = :hash
              WHERE id = :id'
         );
-        $sth->execute($game);
-        return $this;
-    }
-
-    /**
-     * Update/insert a game.
-     *
-     * @param array $game The game details.
-     *
-     * @return Db Allow method chaining.
-     */
-    public function upsertGame(array $game): Db
-    {
-        $dbGame = $this->getGame($game['id']);
-        if (empty($dbGame) === true) {
-            printf("added     [%d] %s\n", $game['id'], $game['name']);
-            $this->insertGame($game);
-        } elseif ($dbGame['hash'] !== $game['hash']) {
-            printf("updated   [%d] %s\n", $game['id'], $game['name']);
-            $this->updateGame($game);
-        } else {
-            printf("unchanged [%d] %s\n", $game['id'], $game['name']);
-        }
-        return $this;
-    }
-
-    /**
-     * Update/insert game ownership.
-     *
-     * @param string $username The user who owns the game.
-     * @param int $gameId The game that the user owns.
-     *
-     * @return Db Allow method chaining.
-     */
-    public function upsertOwnage(string $username, int $gameId): Db
-    {
-        if ($this->userOwnsGame($username, $gameId) === true) {
-            echo "    already owned\n";
-        } else {
-            echo "    newly acquired\n";
-            $this->addOwnage($username, $gameId);
-        }
+        $sth->execute($game->toArray());
         return $this;
     }
 

@@ -142,7 +142,7 @@ class Pdf
         $this->pdf->SetFont('default', '', self::FONT_SIZE_DETAIL);
         $this->pdf->Write(self::LINE_HEIGHT, 'Players: ');
         $this->pdf->SetFont('default', 'B', self::FONT_SIZE_DETAIL);
-        $this->pdf->Write(self::LINE_HEIGHT, $game->players(true));
+        $this->pdf->Write(self::LINE_HEIGHT, $game->getPlayers(true));
         $this->pdf->Write(self::LINE_HEIGHT, "\n");
 
         // Weight field.

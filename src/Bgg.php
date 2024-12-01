@@ -33,13 +33,13 @@ class Bgg
     protected const RATE_LIMIT_SLEEP = 30;
 
     /**
-     * Build an associative array of game details from a API XML packet.
+     * Build a Game object of details from a API XML packet.
      *
-     * @param SimpleXMLElement $game The game to build the array from.
+     * @param SimpleXMLElement $game The API data to build the Game object from.
      *
-     * @return array The array of game details.
+     * @return Game The Game object.
      */
-    protected function buildArray(SimpleXMLElement $game): array
+    protected function buildGame(SimpleXMLElement $game): Game
     {
         $row = [
             'id' => (int) ($game->attributes()['objectid'] ?? 0),
@@ -62,10 +62,7 @@ class Bgg
                 break;
             }
         }
-        $row += $this->getDetailsForThing($row['id']);
-        ksort($row);
-        $row['hash'] = md5((string) json_encode($row, JSON_THROW_ON_ERROR));
-        return $row;
+        return new Game($row);
     }
 
     protected function filterName(string $name): string
@@ -137,7 +134,7 @@ class Bgg
      * @param string $username The user to get the collection for.
      * @param string $pattern Optionally filter the set to games matching this pattern.
      *
-     * @return Generator<array> An iterator over the user's collected items.
+     * @return Generator<Game> An iterator over the user's collected items.
      *
      * @throws RuntimeException If the user owns no games.
      */
@@ -171,7 +168,7 @@ class Bgg
                     }
                 }
             }
-            yield $this->buildArray($game);
+            yield $this->buildGame($game);
         }
     }
 
