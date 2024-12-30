@@ -28,7 +28,7 @@
     "require-dev": {
         "matthiasmullie/minify": "^1.3.73",
         "ork/phpcs": "^2.8.4",
-        "phpstan/phpstan": "^1.12.12",
+        "phpstan/phpstan": "^1.12.13",
         "rector/rector": "^1.2.10",
         "roave/security-advisories": "dev-latest"
     },
