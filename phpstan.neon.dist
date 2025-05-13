@@ -2,7 +2,7 @@ parameters:
     ignoreErrors:
         -
             identifier: missingType.iterableValue
-    level: max
+    level: 8
     paths:
         - bin
         - src

@@ -82,7 +82,6 @@ abstract class AbstractRoute implements RouteInterface
      */
     public function render(string $template, array $args = []): Response
     {
-        // @phpstan-ignore-next-line
         return $this->container->get('view')->render($this->response, $template, $args);
     }
 

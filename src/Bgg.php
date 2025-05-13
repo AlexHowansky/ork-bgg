@@ -104,10 +104,7 @@ class Bgg
                         ->getContents()
                 );
             } catch (ClientException $e) {
-                if (
-                    $e->getResponse() instanceof ResponseInterface &&
-                    $e->getResponse()->getStatusCode() === 429
-                ) {
+                if ($e->getResponse()->getStatusCode() === 429) {
                     sleep(self::RATE_LIMIT_SLEEP);
                     continue;
                 } else {

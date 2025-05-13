@@ -19,7 +19,7 @@
         "ext-pdo_sqlite": "*",
         "bacon/bacon-qr-code": "^3.0.1",
         "fpdf/fpdf": "^1.86",
-        "guzzlehttp/guzzle": "^7.9.2",
+        "guzzlehttp/guzzle": "^7.9.3",
         "mikey179/vfsstream": "^1.6.12",
         "slim/slim": "^3.12.5",
         "slim/twig-view": "^2.5.1",
@@ -27,9 +27,9 @@
     },
     "require-dev": {
         "matthiasmullie/minify": "^1.3.73",
-        "ork/phpcs": "^2.8.4",
-        "phpstan/phpstan": "^1.12.13",
-        "rector/rector": "^1.2.10",
+        "ork/phpcs": "^2.10.0",
+        "phpstan/phpstan": "^2.1.14",
+        "rector/rector": "^2.0.16",
         "roave/security-advisories": "dev-latest"
     },
     "suggest": {
