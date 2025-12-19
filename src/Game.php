@@ -84,7 +84,7 @@ class Game
                 '%d - %d (%s%d)',
                 $this->minPlayers,
                 $this->maxPlayers,
-                $long ? 'best ' : '', $this->recommendedPlayers
+                $long === true ? 'best ' : '', $this->recommendedPlayers
             );
     }
 
