@@ -18,19 +18,19 @@
         "ext-mbstring": "*",
         "ext-pdo_sqlite": "*",
         "bacon/bacon-qr-code": "^3.1.1",
-        "fpdf/fpdf": "^1.86.1",
-        "guzzlehttp/guzzle": "^7.12.3",
+        "fpdf/fpdf": "^1.90.0",
+        "guzzlehttp/guzzle": "^7.15.3",
         "mikey179/vfsstream": "^1.6.12",
         "slim/slim": "^3.13.0",
         "slim/twig-view": "^2.5.1",
         "vanilla/garden-cli": "^4.0",
-        "vlucas/phpdotenv": "^5.6.3"
+        "vlucas/phpdotenv": "^5.6.4"
     },
     "require-dev": {
         "matthiasmullie/minify": "^1.3.75",
-        "ork/phpcs": "^3.0.1",
-        "phpstan/phpstan": "^2.2.2",
-        "rector/rector": "^2.5.2",
+        "ork/phpcs": "^3.0.2",
+        "phpstan/phpstan": "^2.2.8",
+        "rector/rector": "^2.6.1",
         "roave/security-advisories": "dev-latest"
     },
     "suggest": {
